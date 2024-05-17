@@ -6,7 +6,31 @@ workerScripts['worker3'] = './models/workerScripts/worker3.js';
 
 const statusSet = new Set(['installed','activated','idle','terminated']);
 
-
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *   Worker:
+ *    type: object
+ *    required:
+ *     - workerName
+ *     - scriptName
+ *    properties:
+ *     workerName:
+ *      type: string
+ *      description: The worker name
+ *     scriptName:
+ *      type: string
+ *      description: The script name
+ *     status:
+ *      type: string
+ *      description: The worker status
+ *      default: sleeping
+ *    example:
+ *     workerName: Tle
+ *     scriptName: index_discordChatBot
+ *     status: sleeping
+ */
 class MyWorker{
     constructor({workerName,scriptName,workersService}){
         this.workerName = workerName;

@@ -3,6 +3,138 @@ const router = express.Router()
 
 const { WorkersService } = require('../use-cases/WorkersService')
 
+/**
+ * @swagger
+ *  tags:
+ *    name: Workers
+ *    description: Workers management API
+ * 
+ * /:
+ *   get:
+ *     summary: Get all workers
+ *     tags: [Workers]
+ *     responses:
+ *       200:
+ *         description: Workers list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Worker'
+ *       404:
+ *         description: Ressource Not Found
+ * 
+ *   post:
+ *     summary: Add a new worker
+ *     tags: [Workers]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Worker'
+ *     responses:
+ *       201:
+ *         description: Worker added
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Worker'
+ *       500:
+ *         description: Internal Server Error
+ * 
+ * 
+ * /status/{status}:
+ *   get:
+ *     summary: Get workers by status
+ *     tags: [Workers]
+ *     parameters:
+ *      - in: path
+ *        name: status
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The worker status
+ *     responses:
+ *       200:
+ *         description: Workers list with the specified status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Worker'
+ *       404:
+ *         description: Ressource Not Found
+ * 
+ * 
+ * /workerName/{workerName}:
+ *   get:
+ *     summary: Get worker by name
+ *     tags: [Workers]
+ *     parameters:
+ *      - in: path
+ *        name: workerName
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The worker name
+ *     responses:
+ *       200:
+ *         description: The worker
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Worker'
+ *       404:
+ *         description: Ressource Not Found
+ * 
+ *   patch:
+ *     summary: Update worker by name
+ *     tags: [Workers]
+ *     parameters:
+ *      - in: path
+ *        name: workerName
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The worker name
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Worker'
+ *     responses:
+ *       200:
+ *         description: The updated worker
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Worker'
+ *       404:
+ *         description: Ressource Not Found
+ *       500:
+ *         description: Internal Server Error
+ *  
+ *   delete:
+ *     summary: Delete worker by name
+ *     tags: [Workers]
+ *     parameters:
+ *      - in: path
+ *        name: workerName
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The worker name
+ *     responses:
+ *       202:
+ *         description: Worker deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Worker'
+ *       404:
+ *         description: Ressource Not Found  
+ *      
+ */
 
 router.get('/', getWorkers)
 function getWorkers(req, res, next) {

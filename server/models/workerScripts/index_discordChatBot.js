@@ -1,6 +1,6 @@
 // Require the necessary discord.js classes
 const { Client,  Events, GatewayIntentBits } = require('discord.js');
-const { token, salon_id } = require('./config_test_a.json');
+const { token, salon_id } = require('../../token/token_discord_bot_1.json');
 console.log("salon_id : " + salon_id);
 const RiveScript = require('rivescript')
 
