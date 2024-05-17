@@ -2,9 +2,13 @@
 const { Worker, workerData } = require('worker_threads')
 
 const workerScripts = [];
-workerScripts['worker3'] = './models/workerScripts/worker3.js';
+workerScripts['bot1'] = './server/index_discordChatBot1.js';
+workerScripts['bot2'] = './server/index_discordChatBot2.js';
+workerScripts['bot3'] = './server/index_discordChatBot3.js';
+//workerScripts['worker3'] = './workerScripts/worker3.js';
 
-const statusSet = new Set(['installed','activated','idle','terminated']);
+
+const statusSet = new Set(['initializing','functionning','updating','sleeping']);
 
 /**
  * @swagger
@@ -31,6 +35,96 @@ const statusSet = new Set(['installed','activated','idle','terminated']);
  *     scriptName: index_discordChatBot
  *     status: sleeping
  */
+class MyWorker{
+    constructor({workerName,scriptName,workersService}){
+        this.workerName = workerName;
+        this.scriptFile = workerScripts[scriptName];
+        this.workersService = workersService
+        this.job;
+        this.status = 'sleeping';
+        this.workersService.set(this.workerName,this);
+        this.tokenList = [];
+    }
+
+    start(){
+        const worker = new Worker( this.scriptFile, {workerData: {workerName:this.workerName}} );
+        this.job = worker;
+
+        worker.on(
+            'online', 
+            () => { 
+
+                this.status = 'functionning';
+                console.log('Launching intensive CPU task') 
+                
+            }
+        );
+        worker.on(
+            'message', 
+            messageFromWorker => {
+                console.log(`message from worker  ${this.workerName}: ${messageFromWorker}`)
+            }
+        );
+        worker.on(
+            'error', 
+            (code)=>{ throw Error(`Worker ${this.workerName} issued an error with code ${code}`)}
+        );
+        worker.on(
+            'exit', 
+            code => {
+                this.status = 'sleeping';
+            }
+        );
+          
+    }
+
+    dump(){
+        return `This is worker ${this.workerName}`
+    }
+
+    kill(){
+        if(this.status=='functionning' || this.status=='updating' || this.status=='initializing'){
+            this.job.terminate()
+        }
+    }
+
+    delete(){
+        this.kill();
+        this.workersService.delete(this.workerName);
+    }
+
+    isStatus(status){
+        return (status == this.status);
+    }
+
+    setStatus(status){
+        console.log(`setStatus to ${status}, current is ${this.status}`)
+        if('sleeping'== status){
+            this.delete();
+        }
+        if('functionning' == status){
+            if(  this.status == 'sleeping'){
+                this.start();
+            }
+        }
+    }
+
+
+}
+
+
+module.exports = MyWorker;
+  
+
+/*
+const { Worker, workerData } = require('worker_threads')
+
+const workerScripts = [];
+workerScripts['worker3'] = './models/workerScripts/worker3.js';
+
+const statusSet = new Set(['installed','activated','idle','terminated']);
+
+
 class MyWorker{
     constructor({workerName,scriptName,workersService}){
         this.workerName = workerName;
@@ -123,4 +217,4 @@ class MyWorker{
 
 
 module.exports = MyWorker;
-  
+  */
