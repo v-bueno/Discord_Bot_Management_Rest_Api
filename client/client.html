@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        window.addEventListener("DOMContentLoaded",init);
+
+        const workerName = `monWorker`;
+        const scriptName = `worker3`;
+        async function init(){
+            const reponse = await fetch(
+                "http://localhost:3000/api/v1/workers",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({workerName,scriptName})
+                }
+            );
+            //On récupère le worker créé... ou pas!
+            const myWorker = await reponse.json();
+                console.log(myWorker);
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+</body>
+
+
+
+</html>
