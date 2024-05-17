@@ -13,3 +13,6 @@ The json files should be as follows :
     {"token":"<yourtoken>","salon_id":"<your chat id>"}
 
 
+## TODO : 
+
+    - line 67 in server\models\workerScripts\index_discordChatBot.js : the message sent to RiveScript contains the prompt and the mention to the bot ! *WE DON'T WANT IT ! GET RID OF IT !*
