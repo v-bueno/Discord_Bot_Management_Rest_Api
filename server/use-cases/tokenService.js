@@ -29,6 +29,15 @@ class TokenService extends Map{
             }
         }
     }
+
+    giveBackToken(token){
+        if (this.has(token)){
+            this.delete(token);
+        }
+        else{
+            throw Error(`cannot give back Token : token not found. ${error} ${error.stack}`);
+        }
+    }
 }
 
 module.exports = TokenService;
