@@ -113,8 +113,8 @@ const { WorkersService } = require('../use-cases/WorkersService')
  *               $ref: '#/components/schemas/Worker'
  *       404:
  *         description: Ressource Not Found
- *       500:
- *         description: Internal Server Error
+ *       501:
+ *         description: All tokens are already in use, wait for a token to be released
  *  
  *   delete:
  *     summary: Delete worker by name
