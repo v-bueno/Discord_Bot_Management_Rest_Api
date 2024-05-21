@@ -2,9 +2,9 @@
 const { Worker, workerData } = require('worker_threads')
 
 const workerScripts = [];
-workerScripts['bot1'] = './server/index_discordChatBot1.js';
-workerScripts['bot2'] = './server/index_discordChatBot2.js';
-workerScripts['bot3'] = './server/index_discordChatBot3.js';
+workerScripts['bot1'] = './server/index_discordChatBot.js';
+workerScripts['bot2'] = './server/index_discordChatBot.js';
+workerScripts['bot3'] = './server/index_discordChatBot.js';
 //workerScripts['worker3'] = './workerScripts/worker3.js';
 
 
