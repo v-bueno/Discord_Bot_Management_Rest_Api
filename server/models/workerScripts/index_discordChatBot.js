@@ -62,7 +62,6 @@ parentPort.onmessage = function (message) {
   if('token'== message.data[0]){
     token = message.data[1];
     salon_id = message.data[2];
-    console.log('token received : '+token+' '+salon_id);
   }
   if('start'== message.data[0]){
     start();
@@ -76,7 +75,6 @@ function start(){
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent,GatewayIntentBits.GuildMembers,] });
 
 const channel = client.channels.cache.get(salon_id);
-console.log(salon_id);
 client.on('messageCreate', async (message) => {
 
     if (message.channel.id === salon_id) {
@@ -108,6 +106,6 @@ client.once(Events.ClientReady, readyClient => {
 
 
   // Log in to Discord with your client's token
-  console.log('Logging in... with token : '+token+' '+salon_id);
+  console.log('Logging in...');
   client.login(token);
 }

@@ -1,5 +1,7 @@
 const MyWorker = require("../models/MyWorker.model.js");
 
+const CustomError = require('../customError');
+
 class WorkersService extends Map{
 	constructor(){
 		super();
@@ -69,14 +71,21 @@ class WorkersService extends Map{
 		//renvoie L'élément associée à la clé donnée ou undefined si la clé ne fait pas partie de l'objet Map.
 		const myWorker = this.get(workerName);
 		if(undefined == myWorker){
-			throw Error(`cannot get Worker, undefined `);
+			throw new CustomError(`cannot get Worker ${workerName}, cannot get Worker undefined `,'cannot get Worker undefined');
 		}
 		if(payload.status){
 			try{
 				myWorker.setStatus(payload.status);
 			}
 			catch (error){
-				throw Error(`cannot patch Worker`);
+				if (error instanceof CustomError){ 
+					if (error.shortMessage == 'Couldn t get a token'){
+						throw new CustomError(`can not patch worker ${workerName} to set status ${payload.status}, couldn t get a token`,`can not start worker, couldn t get a token`,error);
+					}
+				}
+				else{ 
+					console.error(`Caught an unknown error: ${error.message}`);
+				}
 			}
 		}
 		return myWorker;

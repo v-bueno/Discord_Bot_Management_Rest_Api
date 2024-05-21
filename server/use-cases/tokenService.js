@@ -1,5 +1,8 @@
 const { tokens, salon_id } = require('../token/tokens_discord_bot.json');
 
+// Import the custom error class
+const CustomError = require('../customError');
+
 
 class TokenService extends Map{
 	constructor(){
@@ -36,7 +39,7 @@ class TokenService extends Map{
                 return{"token":tokens[i],"salon_id":salon_id};
             }
             else{
-                throw Error(`cannot get Token : no more token available. ${error} ${error.stack}`);
+                throw new CustomError('Cannot get a Token, no more token available.','no more token available');
             }
         }
     }

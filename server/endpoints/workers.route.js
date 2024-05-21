@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
+const CustomError = require('../customError');
+
 const { WorkersService } = require('../use-cases/WorkersService')
 
 /**
@@ -158,17 +160,8 @@ function getWorkersByStatus(req, res, next) {
       const workers = instance.getWorkersByStatus({workerStatus});
       res.status(200).json(workers)
     } catch (error) {
-        switch(error.message){
-          case 'cannot get Worker undefined':
-            console.error(`>>> ${error} ${error.stack}`)
-            res.status(404).send(`Ressource Not Found`)
-            break;
-          case 'cannot patch Worker': 
-            console.error(`>>> ${error} ${error.stack}`)
-            res.status(500).send(`Internal Server Error`)
-            break;
-        }
-      
+      console.error(`>>> ${error} ${error.stack}`)
+      res.status(404).send(`Ressource Not Found`)
     }
   }
 
@@ -191,18 +184,25 @@ function getWorkerByName(req, res, next) {
 
 router.patch('/workerName/:workerName',patchWorkerByName)
 function patchWorkerByName(req, res, next) {
-    try {
-      const instance = WorkersService.getInstance();
-      const workerName = req.params.workerName;
-      const payload = req.body;
-      console.log(payload)
-      const theWorker = instance.patchWorker({workerName,payload});
-      res.status(200).json(theWorker)
-    } catch (error) {
-      console.error(`>>> ${error} ${error.stack}`)
-      res.status(404).send(`Ressource Not Found`)
+  try {
+    const instance = WorkersService.getInstance();
+    const workerName = req.params.workerName;
+    const payload = req.body;
+    console.log(payload)
+    const theWorker = instance.patchWorker({workerName,payload});
+    res.status(200).json(theWorker)
+  } catch (error) {
+    if (error instanceof CustomError){
+      if (error.shortMessage == 'can not start worker, couldn t get a token'){ //no token available
+        res.status(501).send(`Couldn t get a token. Try again later.`)
+      }
+      else { //worker not found
+        res.status(404).send(`Ressource Not Found`)
+      }            
     }
   }
+}
+
   
 
 

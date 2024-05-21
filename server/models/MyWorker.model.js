@@ -2,6 +2,9 @@
 const { Worker, workerData } = require('worker_threads')
 const tokenService = require('../use-cases/tokenService.js');
 
+// Import the custom error class
+const CustomError = require('../customError');
+
 const workerScripts = [];
 workerScripts['worker3'] = './models/workerScripts/worker3.js';
 workerScripts['index_discordChatBot'] = './models/workerScripts/index_discordChatBot.js';
@@ -55,7 +58,12 @@ class MyWorker{
         this.salon_id = salon_id;
         this.token = token;
         } catch (error){
-            throw Error(`cannot get Token ${error} ${error.stack}`);
+            if (error instanceof CustomError) {
+                throw new CustomError('Couldn t get a token','Couldn t get a token',error);
+
+            } else {
+                console.error(`Caught an unknown error: ${error.message}`);
+            }
         }
         const worker = new Worker( this.scriptFile, {workerData: {workerName:this.workerName}} );
         this.job = worker;
