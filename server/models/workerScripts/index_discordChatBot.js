@@ -1,17 +1,19 @@
 // Require the necessary discord.js classes
 const { Client,  Events, GatewayIntentBits } = require('discord.js');
-const { token, salon_id } = require('../../token/token_discord_bot_1.json');
-console.log("salon_id : " + salon_id);
 const RiveScript = require('rivescript')
+const { parentPort, workerData } = require('worker_threads')
+
+var token;
+var salon_id;
 
 var bot = new RiveScript();
 
 // Load a directory full of RiveScript documents (.rive files). This is for
 // Node.JS only: it doesn't work on the web!
-bot.loadDirectory("brain").then(loading_done).catch(loading_error);
+//bot.loadDirectory("brain").then(loading_done).catch(loading_error);
 
 // Load an individual file.
-bot.loadFile("brain/testsuite.rive").then(loading_done).catch(loading_error);
+//bot.loadFile("brain/testsuite.rive").then(loading_done).catch(loading_error);
 
 // Load a list of files all at once (the best alternative to loadDirectory
 // for the web!)
@@ -48,9 +50,30 @@ function loading_error(error, filename, lineno) {
 
 
 
-// Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent,GatewayIntentBits.GuildMembers,] });
 
+
+
+
+parentPort.onmessage = function (message) {
+  if('suspend'== message.data[0]){
+    stop();
+    parentPort.postMessage(`${workerData.workerName} is idle`);
+  }
+  if('token'== message.data[0]){
+    token = message.data[1];
+    salon_id = message.data[2];
+    console.log('token received : '+token+' '+salon_id);
+  }
+  if('start'== message.data[0]){
+    start();
+    parentPort.postMessage(`${workerData.workerName} is activated`);
+  }
+}
+
+function start(){
+  console.log('Starting bot');
+  // Create a new client instance
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent,GatewayIntentBits.GuildMembers,] });
 
 const channel = client.channels.cache.get(salon_id);
 console.log(salon_id);
@@ -83,5 +106,8 @@ client.once(Events.ClientReady, readyClient => {
     channel.send(`Chat Bot is Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-// Log in to Discord with your client's token
-client.login(token);
+
+  // Log in to Discord with your client's token
+  console.log('Logging in... with token : '+token+' '+salon_id);
+  client.login(token);
+}

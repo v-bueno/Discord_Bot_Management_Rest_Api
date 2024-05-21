@@ -1,8 +1,5 @@
 const MyWorker = require("../models/MyWorker.model.js");
 
-
-
-
 class WorkersService extends Map{
 	constructor(){
 		super();
@@ -72,10 +69,15 @@ class WorkersService extends Map{
 		//renvoie L'élément associée à la clé donnée ou undefined si la clé ne fait pas partie de l'objet Map.
 		const myWorker = this.get(workerName);
 		if(undefined == myWorker){
-			throw Error(`cannot get Worker ${workerName}, undefined `);
+			throw Error(`cannot get Worker, undefined `);
 		}
 		if(payload.status){
-			myWorker.setStatus(payload.status);
+			try{
+				myWorker.setStatus(payload.status);
+			}
+			catch (error){
+				throw Error(`cannot patch Worker`);
+			}
 		}
 		return myWorker;
 	}

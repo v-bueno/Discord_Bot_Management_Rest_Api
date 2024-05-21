@@ -1,4 +1,4 @@
-const { tokens, salon_id } = require('../../token/tokens_discord_bot.json');
+const { tokens, salon_id } = require('../token/tokens_discord_bot.json');
 
 
 class TokenService extends Map{
@@ -17,12 +17,23 @@ class TokenService extends Map{
     getToken(workerName){
         if (tokens.length > 0){
             var i = 0;
-            while (this.has(tokens[i]) && i < tokens.length){
-                i++;
+            var explore = true
+            while (explore){
+                if (i < tokens.length) {
+                    if (this.has(tokens[i])){
+                        i++;
+                    }
+                    else{
+                        explore = false;
+                    }
+                }
+                else{
+                    explore = false;
+                }
             }
             if (i < tokens.length){
                 this.set(tokens[i],workerName);
-                return tokens[i];
+                return{"token":tokens[i],"salon_id":salon_id};
             }
             else{
                 throw Error(`cannot get Token : no more token available. ${error} ${error.stack}`);

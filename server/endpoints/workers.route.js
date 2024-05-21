@@ -158,8 +158,17 @@ function getWorkersByStatus(req, res, next) {
       const workers = instance.getWorkersByStatus({workerStatus});
       res.status(200).json(workers)
     } catch (error) {
-      console.error(`>>> ${error} ${error.stack}`)
-      res.status(404).send(`Ressource Not Found`)
+        switch(error.message){
+          case 'cannot get Worker undefined':
+            console.error(`>>> ${error} ${error.stack}`)
+            res.status(404).send(`Ressource Not Found`)
+            break;
+          case 'cannot patch Worker': 
+            console.error(`>>> ${error} ${error.stack}`)
+            res.status(500).send(`Internal Server Error`)
+            break;
+        }
+      
     }
   }
 

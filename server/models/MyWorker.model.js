@@ -1,10 +1,11 @@
 
 const { Worker, workerData } = require('worker_threads')
+const tokenService = require('../use-cases/tokenService.js');
 
 const workerScripts = [];
-workerScripts['bot1'] = './server/index_discordChatBot.js';
-workerScripts['bot2'] = './server/index_discordChatBot.js';
-workerScripts['bot3'] = './server/index_discordChatBot.js';
+workerScripts['worker3'] = './models/workerScripts/worker3.js';
+workerScripts['index_discordChatBot'] = './models/workerScripts/index_discordChatBot.js';
+
 //workerScripts['worker3'] = './workerScripts/worker3.js';
 
 
@@ -43,13 +44,26 @@ class MyWorker{
         this.job;
         this.status = 'sleeping';
         this.workersService.set(this.workerName,this);
-        this.tokenList = [];
+        this.TokenService = tokenService.getInstance();
+        this.token;
+        this.salon_id;
     }
 
     start(){
+        try{
+        const { token, salon_id } = this.TokenService.getToken(this.workerName);
+        this.salon_id = salon_id;
+        this.token = token;
+        } catch (error){
+            throw Error(`cannot get Token ${error} ${error.stack}`);
+        }
         const worker = new Worker( this.scriptFile, {workerData: {workerName:this.workerName}} );
         this.job = worker;
-
+        
+        //send a message containing the string 'token' and the token and salon_id and the ownership of the token and salon_id
+        console.log('Sending token and salon_id to worker : '+this.token+' '+this.salon_id)
+        this.job.postMessage(["token",this.token,this.salon_id]);
+        this.job.postMessage(["start"]);
         worker.on(
             'online', 
             () => { 

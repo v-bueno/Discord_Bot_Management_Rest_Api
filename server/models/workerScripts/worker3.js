@@ -5,7 +5,7 @@ parentPort.onmessage = function (message) {
     stop();
     parentPort.postMessage(`${workerData.workerName} is idle`);
   }
-  if('continue'== message.data){
+  if('start'== message.data[0]){
     start();
     parentPort.postMessage(`${workerData.workerName} is activated`);
   }
