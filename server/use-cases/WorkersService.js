@@ -66,7 +66,6 @@ class WorkersService extends Map{
 		return myWorker;
 	}
 
-
 	patchWorker({workerName,payload}){
 		//renvoie L'élément associée à la clé donnée ou undefined si la clé ne fait pas partie de l'objet Map.
 		const myWorker = this.get(workerName);

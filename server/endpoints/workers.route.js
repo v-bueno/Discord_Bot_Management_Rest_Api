@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const CustomError = require('../customError');
-
+const LogService = require('../use-cases/LogService')
 const { WorkersService } = require('../use-cases/WorkersService')
 
 /**
@@ -135,7 +135,28 @@ const { WorkersService } = require('../use-cases/WorkersService')
  *               $ref: '#/components/schemas/Worker'
  *       404:
  *         description: Ressource Not Found  
- *      
+ *   
+ * /logs/{workerName}:
+ *   get:
+ *     summary: Get worker logs by name
+ *     tags: [Workers]
+ *     parameters:
+ *      - in: path
+ *        name: workerName
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The worker name
+ *     responses:
+ *       200:
+ *         description: The worker logs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       404:
+ *         description: Ressource Not Found
+ *            
  */
 
 router.get('/', getWorkers)
@@ -165,7 +186,19 @@ function getWorkersByStatus(req, res, next) {
     }
   }
 
-  
+router.get('/logs/:workerName',getWorkerLogs)
+function getWorkerLogs(req, res, next) {
+    try {
+      const instance = LogService.getInstance();
+      const workerName = req.params.workerName;
+      console.log(`controller tries to get logs of worker ${workerName}, ${req.params}`)
+      const logs = instance.getLogs({workerName});
+      res.status(200).json(logs)
+    } catch (error) {
+      console.error(`>>> ${error} ${error.stack}`)
+      res.status(404).send(`Ressource Not Found`)
+    }
+  }
 
 router.get('/workerName/:workerName',getWorkerByName)
 function getWorkerByName(req, res, next) {
