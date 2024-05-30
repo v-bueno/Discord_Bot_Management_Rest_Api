@@ -68,21 +68,21 @@ class MyWorker{
     
     start(){
         try{
-        this.logService.writeLog({workerName:this.workerName,log:`Trying to get a token`})
+        this.logService.writeLog({workerName:this.workerName,log:`Trying to get a token\n`})
         const { token, salon_id } = this.TokenService.getToken(this.workerName);
         this.salon_id = salon_id;
         this.token = token;
         } catch (error){
             if (error instanceof CustomError) {
-                this.logService.writeLog({workerName:this.workerName,log:`Couldn t get a token: ${error.message}`});
+                this.logService.writeLog({workerName:this.workerName,log:`Couldn t get a token: ${error.message}\n`});
                 throw new CustomError('Couldn t get a token','Couldn t get a token',error);
 
             } else {
-                this.logService.writeLog({workerName:this.workerName,log:`Caught an unknown error: ${error.message}`});
+                this.logService.writeLog({workerName:this.workerName,log:`Caught an unknown error: ${error.message}\n`});
                 console.error(`Caught an unknown error: ${error.message}`);
             }
         }
-        this.logService.writeLog({workerName:this.workerName,log:`Starting job`});
+        this.logService.writeLog({workerName:this.workerName,log:`Starting job\n`});
         const worker = new Worker( this.scriptFile, {workerData: {workerName:this.workerName}} );
         this.job = worker;
         
@@ -95,7 +95,7 @@ class MyWorker{
             () => { 
 
                 this.status = 'functionning';
-                this.logService.writeLog({workerName:this.workerName,log:'Launching intensive CPU task'});
+                this.logService.writeLog({workerName:this.workerName,log:'Launching intensive CPU task\n'});
                 console.log('Launching intensive CPU task') ;
                 
             }
@@ -103,19 +103,19 @@ class MyWorker{
         worker.on(
             'message', 
             messageFromWorker => {
-                this.logService.writeLog({workerName:this.workerName,log:`message from worker : ${messageFromWorker}`});
+                this.logService.writeLog({workerName:this.workerName,log:`message from worker : ${messageFromWorker}\n`});
                 console.log(`message from worker  ${this.workerName}: ${messageFromWorker}`);
             }
         );
         worker.on(
             'error', 
-            (code)=>{ this.logService.writeLog({workerName:this.workerName,log:`Worker issued an error with code ${code}`});
+            (code)=>{ this.logService.writeLog({workerName:this.workerName,log:`Worker issued an error with code ${code}\n`});
                 throw Error(`Worker ${this.workerName} issued an error with code ${code}`)}
         );
         worker.on(
             'exit', 
             code => {
-                this.logService.writeLog({workerName:this.workerName,log:`Worker exited with code ${code}. Changing status to sleeping`});
+                this.logService.writeLog({workerName:this.workerName,log:`Worker exited with code ${code}. Changing status to sleeping\n`});
                 this.status = 'sleeping';
             }
         );
@@ -128,14 +128,14 @@ class MyWorker{
 
     kill(){
         if(this.status=='functionning' || this.status=='updating' || this.status=='initializing'){
-            this.logService.writeLog({workerName:this.workerName,log:`Received a kill signal, terminating job and giving back token`});
+            this.logService.writeLog({workerName:this.workerName,log:`Received a kill signal, terminating job and giving back token\n`});
             this.TokenService.giveBackToken(this.token);
             this.job.terminate()
         }
     }
 
     delete(){
-        this.logService.writeLog({workerName:this.workerName,log:`Received a delete signal, terminating job and giving back token, then deleting worker.`});
+        this.logService.writeLog({workerName:this.workerName,log:`Received a delete signal, terminating job and giving back token, then deleting worker.\n`});
         console.log(`Received a delete signal, terminating job and giving back token, then deleting worker ${this.workerName}.`);
         this.kill();
         this.workersService.delete(this.workerName);
@@ -146,7 +146,7 @@ class MyWorker{
     }
 
     setStatus(status){
-        this.logService.writeLog({workerName:this.workerName,log:`setStatus to ${status}, current is ${this.status}`});
+        this.logService.writeLog({workerName:this.workerName,log:`setStatus to ${status}, current is ${this.status}\n`});
         console.log(`setStatus to ${status}, current is ${this.status}`);
         if('sleeping'== status){
             this.kill();
